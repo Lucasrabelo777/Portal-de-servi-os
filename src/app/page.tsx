@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useMemo } from 'react'
-import { Search, ArrowLeft, MapPin, Clock, Users, DollarSign, Copy, CheckCircle, XCircle, FileText, Image, Video, Globe, ChevronDown, ChevronUp, Calendar, Star, TrendingUp, Zap, Target, Gift, Shield, Award, CreditCard, ThumbsUp } from 'lucide-react'
+import { Search, ArrowLeft, MapPin, Clock, Users, DollarSign, Copy, CheckCircle, XCircle, FileText, Image, Video, Globe, ChevronDown, ChevronUp, Calendar, Star, TrendingUp } from 'lucide-react'
 
 // Cores específicas solicitadas para cada categoria
 const categoryColors = {
@@ -38,59 +38,6 @@ const categoryPageDescriptions = {
 
 // Categorias que têm pacotes (para mostrar detalhes de precificação)
 const packageCategories = ['pacotes-jericoacoara', 'pacotes-fortaleza-jericoacoara', 'pacotes-fortaleza']
-
-// Dados dos gatilhos visuais
-const triggersData = [
-  {
-    id: 1,
-    name: 'Prestação da empresa',
-    icon: <Award className="w-8 h-8" />,
-    link: 'https://exemplo.com/prestacao-empresa',
-    description: 'Mostre a credibilidade e histórico da SIM7'
-  },
-  {
-    id: 2,
-    name: 'Gatilho de confiança',
-    icon: <Shield className="w-8 h-8" />,
-    link: 'https://exemplo.com/gatilho-confianca',
-    description: 'Elementos que transmitem segurança ao cliente'
-  },
-  {
-    id: 3,
-    name: 'Diferenciais da Sim7',
-    icon: <Target className="w-8 h-8" />,
-    link: 'https://exemplo.com/diferenciais-sim7',
-    description: 'O que nos torna únicos no mercado'
-  },
-  {
-    id: 4,
-    name: 'Cupom de primeira compra',
-    icon: <Gift className="w-8 h-8" />,
-    link: 'https://exemplo.com/cupom-primeira-compra',
-    description: 'Desconto especial para novos clientes'
-  },
-  {
-    id: 5,
-    name: 'Por que comprar com a Sim7',
-    icon: <ThumbsUp className="w-8 h-8" />,
-    link: 'https://exemplo.com/por-que-comprar-sim7',
-    description: 'Razões para escolher nossos serviços'
-  },
-  {
-    id: 6,
-    name: 'Recomende no Reclame Aqui',
-    icon: <Star className="w-8 h-8" />,
-    link: 'https://exemplo.com/reclame-aqui',
-    description: 'Nossa reputação e avaliações'
-  },
-  {
-    id: 7,
-    name: 'Nosso Pix',
-    icon: <CreditCard className="w-8 h-8" />,
-    link: 'https://exemplo.com/nosso-pix',
-    description: 'Informações para pagamento via Pix'
-  }
-]
 
 // Dados mock dos serviços expandidos
 const categoriesData = {
@@ -1103,12 +1050,11 @@ const PricingDetails = ({ product, categoryKey }) => {
 }
 
 export default function Portal() {
-  const [currentView, setCurrentView] = useState('home') // 'home', 'category', 'product', 'triggers'
+  const [currentView, setCurrentView] = useState('home') // 'home', 'category', 'product'
   const [selectedCategory, setSelectedCategory] = useState(null)
   const [selectedProduct, setSelectedProduct] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [categorySearchTerm, setCategorySearchTerm] = useState('')
-  const [copiedTrigger, setCopiedTrigger] = useState('')
 
   // Função de busca que procura em todos os produtos (página inicial)
   const searchResults = useMemo(() => {
@@ -1168,88 +1114,6 @@ export default function Portal() {
   const handleBackToCategory = () => {
     setCurrentView('category')
     setSelectedProduct(null)
-  }
-
-  const handleTriggersClick = () => {
-    setCurrentView('triggers')
-    setSearchTerm('')
-  }
-
-  const copyTriggerLink = (link, triggerId) => {
-    navigator.clipboard.writeText(link)
-    setCopiedTrigger(triggerId)
-    setTimeout(() => setCopiedTrigger(''), 2000)
-  }
-
-  // Renderização da página de gatilhos
-  if (currentView === 'triggers') {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-3 sm:p-4 md:p-6">
-        <div className="max-w-6xl mx-auto">
-          {/* Header com botão voltar */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center mb-6 sm:mb-8 pt-4 sm:pt-6">
-            <button
-              onClick={handleBackToHome}
-              className="flex items-center gap-2 text-blue-600 hover:text-blue-800 transition-all duration-300 bg-white px-4 py-2 rounded-xl shadow-md hover:shadow-lg transform hover:scale-105 mb-4 sm:mb-0"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              Voltar
-            </button>
-            <div className="sm:ml-6">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 flex items-center gap-3">
-                <Zap className="text-2xl sm:text-3xl md:text-4xl text-yellow-500" />
-                Biblioteca de Gatilhos
-              </h1>
-              <p className="text-gray-600 mt-2 text-sm sm:text-base mb-1">
-                Materiais visuais prontos para compartilhar com seus clientes
-              </p>
-              <p className="text-gray-500 text-xs sm:text-sm">{triggersData.length} gatilhos disponíveis</p>
-            </div>
-          </div>
-
-          {/* Grid de Gatilhos */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
-            {triggersData.map((trigger) => (
-              <div
-                key={trigger.id}
-                className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-2 border border-gray-100 overflow-hidden flex flex-col h-full"
-              >
-                {/* Barra colorida no topo - gradiente especial para gatilhos */}
-                <div className="h-2 bg-gradient-to-r from-yellow-400 to-orange-500"></div>
-                
-                <div className="p-4 sm:p-5 md:p-6 text-center flex flex-col justify-between flex-1">
-                  <div className="flex-1 flex flex-col justify-center">
-                    <div className="text-yellow-500 mb-3 sm:mb-4 flex justify-center">
-                      {trigger.icon}
-                    </div>
-                    <h3 className="text-sm sm:text-base md:text-lg font-bold text-gray-800 mb-2 sm:mb-3 leading-tight">{trigger.name}</h3>
-                    <p className="text-xs sm:text-sm md:text-base text-gray-600 mb-4 sm:mb-6 leading-relaxed">
-                      {trigger.description}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => copyTriggerLink(trigger.link, trigger.id)}
-                    className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white hover:from-yellow-500 hover:to-orange-600 px-4 sm:px-6 py-2 sm:py-3 rounded-xl text-xs sm:text-sm md:text-base font-medium transition-all duration-300 transform hover:scale-105 shadow-sm hover:shadow-md w-full flex items-center justify-center gap-2"
-                  >
-                    {copiedTrigger === trigger.id ? (
-                      <>
-                        <CheckCircle className="w-4 h-4" />
-                        Copiado!
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-4 h-4" />
-                        Copiar Link
-                      </>
-                    )}
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    )
   }
 
   // Renderização da página inicial
@@ -1320,7 +1184,7 @@ export default function Portal() {
           </div>
 
           {/* Grid de Categorias - Responsivo com alinhamento padronizado */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 md:gap-6 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
             {Object.entries(categoriesData).map(([key, category]) => (
               <div
                 key={key}
@@ -1347,46 +1211,6 @@ export default function Portal() {
                 </div>
               </div>
             ))}
-          </div>
-
-          {/* Seção Biblioteca de Gatilhos - Nova seção abaixo das categorias */}
-          <div className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-2xl p-6 sm:p-8 border-2 border-yellow-200 shadow-lg">
-            <div className="text-center mb-6">
-              <div className="flex justify-center mb-4">
-                <div className="bg-gradient-to-r from-yellow-400 to-orange-500 p-4 rounded-full">
-                  <Zap className="w-8 h-8 text-white" />
-                </div>
-              </div>
-              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mb-3">
-                📚 Biblioteca de Gatilhos
-              </h2>
-              <p className="text-gray-600 text-sm sm:text-base md:text-lg mb-4">
-                Materiais visuais prontos para impactar e converter seus clientes
-              </p>
-              <p className="text-gray-500 text-xs sm:text-sm mb-6">
-                {triggersData.length} gatilhos visuais disponíveis para compartilhamento
-              </p>
-              
-              <button
-                onClick={handleTriggersClick}
-                className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white hover:from-yellow-500 hover:to-orange-600 px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-sm sm:text-base md:text-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center gap-3 mx-auto"
-              >
-                <Zap className="w-5 h-5" />
-                Acessar Biblioteca de Gatilhos
-              </button>
-            </div>
-            
-            {/* Preview dos gatilhos */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 sm:gap-4">
-              {triggersData.map((trigger) => (
-                <div key={trigger.id} className="bg-white rounded-xl p-3 sm:p-4 text-center shadow-sm border border-yellow-200">
-                  <div className="text-yellow-500 mb-2 flex justify-center">
-                    {React.cloneElement(trigger.icon, { className: "w-5 h-5 sm:w-6 sm:h-6" })}
-                  </div>
-                  <p className="text-xs sm:text-sm font-medium text-gray-700 leading-tight">{trigger.name}</p>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
       </div>
