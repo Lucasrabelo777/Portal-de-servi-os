@@ -1381,35 +1381,44 @@ export default function Portal() {
             ))}
           </div>
 
-          {/* Biblioteca de Gatilhos - Nova seção logo abaixo das categorias */}
+          {/* Biblioteca de Gatilhos - Seção mais clean e leve */}
           <div className="mt-8 sm:mt-12">
             <div 
               onClick={handleTriggersClick}
-              className="bg-gradient-to-r from-yellow-400 to-orange-500 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-2 border border-orange-200 overflow-hidden"
+              className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-[1.02] hover:-translate-y-1 border border-gray-200 overflow-hidden"
             >
-              <div className="p-6 sm:p-8 text-center text-white">
+              <div className="p-6 sm:p-8 text-center">
+                {/* Ícone mais sutil */}
                 <div className="flex justify-center mb-4">
-                  <Zap className="w-12 h-12 sm:w-16 sm:h-16 text-white" />
+                  <div className="bg-gradient-to-r from-amber-100 to-orange-100 p-4 rounded-2xl">
+                    <Zap className="w-10 h-10 sm:w-12 sm:h-12 text-amber-600" />
+                  </div>
                 </div>
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3">Biblioteca de Gatilhos</h2>
-                <p className="text-yellow-100 text-sm sm:text-base md:text-lg mb-6 max-w-2xl mx-auto">
+                
+                {/* Título com cores mais suaves */}
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 text-gray-800">Biblioteca de Gatilhos</h2>
+                <p className="text-gray-600 text-sm sm:text-base md:text-lg mb-6 max-w-2xl mx-auto">
                   Acesse gatilhos visuais prontos para compartilhar com seus clientes e aumentar suas vendas
                 </p>
+                
+                {/* Tags com cores mais suaves */}
                 <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-6">
-                  <span className="bg-gradient-to-r from-yellow-500 to-orange-400 text-white px-3 py-1 rounded-full text-xs sm:text-sm font-medium shadow-sm">
+                  <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs sm:text-sm font-medium border border-gray-200">
                     📊 Prestação da empresa
                   </span>
-                  <span className="bg-gradient-to-r from-yellow-500 to-orange-400 text-white px-3 py-1 rounded-full text-xs sm:text-sm font-medium shadow-sm">
+                  <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs sm:text-sm font-medium border border-gray-200">
                     🛡️ Gatilho de confiança
                   </span>
-                  <span className="bg-gradient-to-r from-yellow-500 to-orange-400 text-white px-3 py-1 rounded-full text-xs sm:text-sm font-medium shadow-sm">
+                  <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs sm:text-sm font-medium border border-gray-200">
                     🎁 Cupom primeira compra
                   </span>
-                  <span className="bg-gradient-to-r from-yellow-500 to-orange-400 text-white px-3 py-1 rounded-full text-xs sm:text-sm font-medium shadow-sm">
+                  <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs sm:text-sm font-medium border border-gray-200">
                     💳 Nosso Pix
                   </span>
                 </div>
-                <button className="bg-white text-orange-600 hover:bg-orange-50 px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-sm sm:text-base md:text-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+                
+                {/* Botão mais sutil */}
+                <button className="bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600 px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-sm sm:text-base md:text-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg">
                   Acessar Biblioteca
                 </button>
               </div>
