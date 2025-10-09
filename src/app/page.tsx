@@ -1472,7 +1472,7 @@ export default function Portal() {
             </div>
           </div>
 
-          {/* Grid de Produtos */}
+          {/* Grid de Produtos - REMOVIDO informações de duração dos cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
             {categorySearchResults.map((product) => (
               <div
@@ -1489,10 +1489,6 @@ export default function Portal() {
                     <p className="text-gray-600 text-sm sm:text-base mb-3 sm:mb-4">{product.description}</p>
                     
                     <div className="flex flex-col gap-2 text-sm text-gray-500 mb-4 sm:mb-6">
-                      <div className="flex items-center gap-2">
-                        <Clock className="w-4 h-4" />
-                        <span>{product.duration}</span>
-                      </div>
                       <div className="flex items-center gap-2">
                         <Users className="w-4 h-4" />
                         <span>{product.people}</span>
@@ -1563,18 +1559,10 @@ export default function Portal() {
                 
                 <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 mb-3">{selectedProduct.name}</h1>
                 
-                {/* Breve descrição abaixo do nome */}
+                {/* Breve descrição abaixo do nome - REMOVIDO informações de duração */}
                 <p className="text-gray-600 text-sm sm:text-base mb-6">{selectedProduct.description}</p>
                 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 md:gap-8 mb-8">
-                  <div className="flex items-center gap-3 text-gray-700">
-                    <Clock className="w-6 h-6 text-blue-500 flex-shrink-0" />
-                    <div>
-                      <p className="text-sm text-gray-500">Duração</p>
-                      <p className="font-semibold">{selectedProduct.duration}</p>
-                    </div>
-                  </div>
-                  
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 md:gap-8 mb-8">
                   <div className="flex items-center gap-3 text-gray-700">
                     <Users className="w-6 h-6 text-blue-500 flex-shrink-0" />
                     <div>
@@ -1611,7 +1599,7 @@ export default function Portal() {
                   <ExpandableText text={selectedProduct.aboutService} />
                 </div>
 
-                {/* Duração */}
+                {/* Duração - MANTIDO apenas na seção de entrega */}
                 <div className="bg-orange-50 rounded-2xl p-4 sm:p-6">
                   <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
                     <Clock className="w-5 h-5 text-orange-600" />
