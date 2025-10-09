@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useMemo } from 'react'
-import { Search, ArrowLeft, MapPin, Clock, Users, DollarSign, Copy, CheckCircle, XCircle, FileText, Image, Video, Globe, ChevronDown, ChevronUp, Calendar, Star, TrendingUp, Zap, Shield, Award, Gift, Heart, MessageCircle, CreditCard } from 'lucide-react'
+import { Search, ArrowLeft, MapPin, Clock, Users, DollarSign, Copy, CheckCircle, XCircle, FileText, Image, Video, Globe, ChevronDown, ChevronUp, Calendar, Star, TrendingUp, Zap, Shield, Award, Gift, Heart, MessageCircle, CreditCard, Filter, X, Home, Bed, Package, Bell } from 'lucide-react'
 
 // Cores específicas solicitadas para cada categoria
 const categoryColors = {
@@ -11,7 +11,9 @@ const categoryColors = {
   'servicos-regulares': 'from-green-400 to-green-500',
   'ingressos-atividades': 'from-purple-400 to-purple-500',
   'transfers-privativos': 'from-pink-400 to-pink-500',
-  'passeios-privativos': 'from-amber-600 to-amber-700'
+  'passeios-privativos': 'from-amber-600 to-amber-700',
+  'apenas-hospedagens': 'from-teal-400 to-teal-500',
+  'outros': 'from-gray-400 to-gray-500'
 }
 
 // Descrições das categorias
@@ -22,7 +24,9 @@ const categoryDescriptions = {
   'servicos-regulares': 'Transporte compartilhado econômico',
   'ingressos-atividades': 'Diversão garantida para toda família',
   'transfers-privativos': 'Conforto e exclusividade no transporte',
-  'passeios-privativos': 'Experiências únicas e personalizadas'
+  'passeios-privativos': 'Experiências únicas e personalizadas',
+  'apenas-hospedagens': 'Acomodações selecionadas para sua estadia',
+  'outros': 'Serviços especiais e personalizados'
 }
 
 // Descrições detalhadas das páginas de categoria
@@ -33,11 +37,57 @@ const categoryPageDescriptions = {
   'servicos-regulares': 'Aqui você encontra serviços de transporte compartilhado com saídas regulares.',
   'ingressos-atividades': 'Aqui você encontra ingressos para parques, atividades e experiências únicas.',
   'transfers-privativos': 'Aqui você encontra serviços de transporte exclusivo e personalizado.',
-  'passeios-privativos': 'Aqui você encontra passeios exclusivos com guias especializados e roteiros personalizados.'
+  'passeios-privativos': 'Aqui você encontra passeios exclusivos com guias especializados e roteiros personalizados.',
+  'apenas-hospedagens': 'Aqui você encontra apenas opções de hospedagem sem outros serviços inclusos.',
+  'outros': 'Aqui você encontra serviços especiais que não se encaixam nas outras categorias.'
 }
 
 // Categorias que têm pacotes (para mostrar detalhes de precificação)
 const packageCategories = ['pacotes-jericoacoara', 'pacotes-fortaleza-jericoacoara', 'pacotes-fortaleza']
+
+// Dados das notificações
+const notificationsData = [
+  {
+    id: 1,
+    title: '🎉 Promoção Especial Jericoacoara',
+    message: 'Pacotes para Jericoacoara com 20% de desconto até o final do mês! Aproveite esta oportunidade única.',
+    date: '2024-01-15',
+    type: 'promotion',
+    isNew: true
+  },
+  {
+    id: 2,
+    title: '🆕 Novo Serviço Disponível',
+    message: 'Agora oferecemos consultoria turística personalizada para seus clientes. Confira na categoria "Outros".',
+    date: '2024-01-14',
+    type: 'new-service',
+    isNew: true
+  },
+  {
+    id: 3,
+    title: '📱 Biblioteca de Gatilhos',
+    message: 'Use nossa biblioteca de gatilhos para aumentar suas vendas! Acesse através do menu principal.',
+    date: '2024-01-13',
+    type: 'tip',
+    isNew: false
+  },
+  {
+    id: 4,
+    title: '🏨 Novas Hospedagens',
+    message: 'Adicionamos novas opções de hospedagem em Fortaleza e Jericoacoara com preços especiais.',
+    date: '2024-01-12',
+    type: 'update',
+    isNew: false
+  },
+  {
+    id: 5,
+    title: '💳 Facilite o Pagamento',
+    message: 'Lembre-se de usar nosso Pix para facilitar o pagamento dos seus clientes. Link disponível nos gatilhos.',
+    date: '2024-01-11',
+    type: 'reminder',
+    isNew: false
+  }
+]
 
 // Dados dos gatilhos visuais
 const triggersData = [
@@ -109,6 +159,8 @@ const categoriesData = {
         id: 1,
         name: 'Jericoacoara 3 dias / 2 noites',
         price: 'R$ 850,00',
+        costPrice: 'R$ 680,00',
+        netValue: 'R$ 170,00',
         description: 'Pacote completo com hospedagem em pousada, café da manhã e transfer',
         duration: '3 dias',
         people: '2 pessoas',
@@ -119,6 +171,8 @@ const categoriesData = {
         highlights: ['Pousada no centro de Jeri', 'Transfer em veículo 4x4', 'Café da manhã regional', 'Suporte 24h'],
         importantNotes: ['Check-in a partir das 14h', 'Check-out até 12h', 'Documentos obrigatórios', 'Confirmação 48h antes'],
         rules: ['Não é permitido fumar nos quartos', 'Animais não são permitidos', 'Respeitar horário de silêncio (22h às 7h)', 'Danos serão cobrados à parte'],
+        agenda: 'Dia 1: Chegada em Jericoacoara, check-in na pousada e tempo livre para conhecer a vila. Dia 2: Manhã livre para relaxar na praia, tarde com passeio opcional pelas dunas e pôr do sol na Duna do Pôr do Sol. Dia 3: Café da manhã, check-out e transfer de retorno.',
+        availableDays: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'],
         specialistLibrary: {
           pdf: 'https://exemplo.com/jeri-3dias-detalhes.pdf',
           banner1: 'https://exemplo.com/banner-jeri-promocional.jpg',
@@ -153,6 +207,8 @@ const categoriesData = {
         id: 2,
         name: 'Jericoacoara 5 dias / 4 noites',
         price: 'R$ 1.450,00',
+        costPrice: 'R$ 1.160,00',
+        netValue: 'R$ 290,00',
         description: 'Pacote estendido com mais tempo para aproveitar as belezas de Jeri',
         duration: '5 dias',
         people: '2 pessoas',
@@ -163,6 +219,8 @@ const categoriesData = {
         highlights: ['Passeio de buggy incluso', 'Mais tempo para relaxar', 'Hospedagem premium', 'Roteiro flexível'],
         importantNotes: ['Passeio de buggy sujeito às condições climáticas', 'Recomendado protetor solar', 'Levar roupas leves'],
         rules: ['Respeitar meio ambiente', 'Não alimentar animais silvestres', 'Seguir orientações do guia'],
+        agenda: 'Dia 1: Chegada e acomodação. Dia 2: Passeio de buggy pelas praias e lagoas. Dia 3: Visita à Pedra Furada e relaxamento na praia. Dia 4: Passeio opcional aos Lençóis Maranhenses ou tempo livre. Dia 5: Check-out e retorno.',
+        availableDays: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'],
         specialistLibrary: {
           pdf: 'https://exemplo.com/jeri-5dias-completo.pdf',
           banner1: 'https://exemplo.com/banner-jeri-5dias.jpg',
@@ -197,6 +255,8 @@ const categoriesData = {
         id: 3,
         name: 'Jericoacoara Luxo 4 dias / 3 noites',
         price: 'R$ 2.200,00',
+        costPrice: 'R$ 1.760,00',
+        netValue: 'R$ 440,00',
         description: 'Experiência premium com hospedagem em resort e serviços exclusivos',
         duration: '4 dias',
         people: '2 pessoas',
@@ -207,6 +267,8 @@ const categoriesData = {
         highlights: ['Resort 5 estrelas', 'Vista para o mar', 'Spa incluso', 'Gastronomia premium', 'Transfer privativo'],
         importantNotes: ['Dress code no restaurante principal', 'Reservas no spa com antecedência', 'Transfer privativo em horário flexível'],
         rules: ['Traje adequado nas áreas sociais', 'Reservas de restaurante obrigatórias', 'Respeitar outros hóspedes'],
+        agenda: 'Dia 1: Transfer privativo e check-in no resort, welcome drink e jantar gourmet. Dia 2: Spa pela manhã, almoço no resort e tarde livre na praia privativa. Dia 3: Passeio exclusivo de catamarã e jantar especial. Dia 4: Check-out e transfer de retorno.',
+        availableDays: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'],
         specialistLibrary: {
           pdf: 'https://exemplo.com/jeri-luxo-detalhes.pdf',
           banner1: 'https://exemplo.com/banner-jeri-luxo.jpg',
@@ -247,6 +309,8 @@ const categoriesData = {
         id: 4,
         name: 'Fortaleza + Jeri 6 dias / 5 noites',
         price: 'R$ 1.680,00',
+        costPrice: 'R$ 1.344,00',
+        netValue: 'R$ 336,00',
         description: 'Combine o melhor de Fortaleza com as belezas de Jericoacoara',
         duration: '6 dias',
         people: '2 pessoas',
@@ -257,6 +321,8 @@ const categoriesData = {
         highlights: ['Dois destinos em um', 'City tour em Fortaleza', 'Hospedagens selecionadas', 'Transfers inclusos'],
         importantNotes: ['Bagagem limitada para Jeri', 'Transfer para Jeri em veículo 4x4', 'Documentos necessários'],
         rules: ['Horários de transfer fixos', 'Bagagem máxima 15kg para Jeri', 'Check-in conforme disponibilidade'],
+        agenda: 'Dias 1-2: Fortaleza - City tour, praias urbanas e vida noturna. Dia 3: Transfer para Jericoacoara. Dias 4-5: Jericoacoara - praias, dunas e pôr do sol. Dia 6: Retorno para Fortaleza e partida.',
+        availableDays: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'],
         specialistLibrary: {
           pdf: 'https://exemplo.com/fortaleza-jeri-roteiro.pdf',
           banner1: 'https://exemplo.com/banner-fortaleza-jeri.jpg',
@@ -291,6 +357,8 @@ const categoriesData = {
         id: 5,
         name: 'Roteiro Completo 8 dias / 7 noites',
         price: 'R$ 2.850,00',
+        costPrice: 'R$ 2.280,00',
+        netValue: 'R$ 570,00',
         description: 'Experiência completa pelos principais destinos do Ceará',
         duration: '8 dias',
         people: '2 pessoas',
@@ -301,6 +369,8 @@ const categoriesData = {
         highlights: ['Roteiro completo', 'Tudo incluído', 'Transfers privativos', 'Guias especializados', 'Hospedagens premium'],
         importantNotes: ['Roteiro sujeito a condições climáticas', 'Documentos obrigatórios', 'Seguro viagem recomendado'],
         rules: ['Seguir cronograma estabelecido', 'Respeitar horários dos passeios', 'Cuidar do meio ambiente'],
+        agenda: 'Dias 1-2: Fortaleza - City tour completo e praias. Dias 3-5: Jericoacoara - dunas, lagoas e praias. Dias 6-7: Canoa Quebrada - falésias e cultura local. Dia 8: Retorno e despedida.',
+        availableDays: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'],
         specialistLibrary: {
           pdf: 'https://exemplo.com/roteiro-completo-ceara.pdf',
           banner1: 'https://exemplo.com/banner-roteiro-completo.jpg',
@@ -341,6 +411,8 @@ const categoriesData = {
         id: 6,
         name: 'Fortaleza 3 dias / 2 noites',
         price: 'R$ 650,00',
+        costPrice: 'R$ 520,00',
+        netValue: 'R$ 130,00',
         description: 'Conheça os principais pontos turísticos da capital cearense',
         duration: '3 dias',
         people: '2 pessoas',
@@ -351,6 +423,8 @@ const categoriesData = {
         highlights: ['Hospedagem no centro', 'City tour incluso', 'Praias urbanas', 'Cultura local'],
         importantNotes: ['City tour sujeito a condições climáticas', 'Levar protetor solar', 'Documentos obrigatórios'],
         rules: ['Respeitar horários do city tour', 'Não é permitido fumar no veículo', 'Seguir orientações do guia'],
+        agenda: 'Dia 1: Chegada, check-in e city tour pelos principais pontos turísticos. Dia 2: Manhã nas praias urbanas, tarde no Mercado Central e noite livre. Dia 3: Check-out e transfer para aeroporto.',
+        availableDays: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'],
         specialistLibrary: {
           pdf: 'https://exemplo.com/fortaleza-3dias.pdf',
           banner1: 'https://exemplo.com/banner-fortaleza-city.jpg',
@@ -385,6 +459,8 @@ const categoriesData = {
         id: 7,
         name: 'Fortaleza Praia 4 dias / 3 noites',
         price: 'R$ 980,00',
+        costPrice: 'R$ 784,00',
+        netValue: 'R$ 196,00',
         description: 'Foque nas belas praias de Fortaleza e região metropolitana',
         duration: '4 dias',
         people: '2 pessoas',
@@ -395,6 +471,8 @@ const categoriesData = {
         highlights: ['Hospedagem beira-mar', 'Acesso direto à praia', 'Passeio pelas praias', 'Localização privilegiada'],
         importantNotes: ['Protetor solar obrigatório', 'Cuidado com exposição solar', 'Hidratação constante'],
         rules: ['Respeitar meio ambiente marinho', 'Não deixar lixo na praia', 'Cuidado com pertences'],
+        agenda: 'Dia 1: Chegada e acomodação na beira-mar. Dia 2: Passeio pelas praias de Iracema e Meireles. Dia 3: Visita às praias do Futuro e Sabiaguaba. Dia 4: Manhã livre na praia e partida.',
+        availableDays: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'],
         specialistLibrary: {
           pdf: 'https://exemplo.com/fortaleza-praias.pdf',
           banner1: 'https://exemplo.com/banner-fortaleza-beach.jpg',
@@ -435,6 +513,8 @@ const categoriesData = {
         id: 8,
         name: 'Transfer Aeroporto - Centro',
         price: 'R$ 45,00',
+        costPrice: 'R$ 32,00',
+        netValue: 'R$ 13,00',
         description: 'Transporte regular do aeroporto para região central',
         duration: '45 min',
         people: 'Por pessoa',
@@ -445,6 +525,8 @@ const categoriesData = {
         highlights: ['Preço acessível', 'Horários regulares', 'Veículos climatizados', 'Motoristas experientes'],
         importantNotes: ['Horários fixos de saída', 'Bagagem limitada', 'Chegada com antecedência'],
         rules: ['Pontualidade obrigatória', 'Bagagem de mão apenas', 'Respeitar outros passageiros'],
+        agenda: 'Saídas regulares a cada 30 minutos do aeroporto. Duração aproximada de 45 minutos até o centro da cidade. Paradas em pontos pré-determinados conforme rota estabelecida.',
+        availableDays: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'],
         specialistLibrary: {
           pdf: 'https://exemplo.com/transfer-aeroporto.pdf',
           banner1: 'https://exemplo.com/banner-transfer-regular.jpg',
@@ -458,6 +540,8 @@ const categoriesData = {
         id: 9,
         name: 'Fortaleza - Jericoacoara',
         price: 'R$ 85,00',
+        costPrice: 'R$ 60,00',
+        netValue: 'R$ 25,00',
         description: 'Transporte regular entre Fortaleza e Jericoacoara',
         duration: '4 horas',
         people: 'Por pessoa',
@@ -468,6 +552,8 @@ const categoriesData = {
         highlights: ['Ônibus executivo', 'Wi-Fi gratuito', 'Saídas diárias', 'Preço econômico'],
         importantNotes: ['Chegada 30min antes', 'Documentos obrigatórios', 'Bagagem limitada'],
         rules: ['Não é permitido fumar', 'Respeitar outros passageiros', 'Seguir horários'],
+        agenda: 'Saída de Fortaleza às 7h30 e 14h30. Parada técnica em Jijoca para lanche (não incluso). Chegada em Jericoacoara após 4 horas de viagem. Retorno nos mesmos horários.',
+        availableDays: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'],
         specialistLibrary: {
           pdf: 'https://exemplo.com/fortaleza-jeri-regular.pdf',
           banner1: 'https://exemplo.com/banner-onibus-jeri.jpg',
@@ -487,6 +573,8 @@ const categoriesData = {
         id: 10,
         name: 'Beach Park - Ingresso',
         price: 'R$ 180,00',
+        costPrice: 'R$ 144,00',
+        netValue: 'R$ 36,00',
         description: 'Ingresso para o maior parque aquático da América Latina',
         duration: 'Dia inteiro',
         people: 'Por pessoa',
@@ -497,6 +585,8 @@ const categoriesData = {
         highlights: ['Maior parque aquático da AL', 'Todas as atrações inclusas', 'Diversão para toda família', 'Estacionamento gratuito'],
         importantNotes: ['Levar protetor solar', 'Roupas de banho obrigatórias', 'Crianças acompanhadas'],
         rules: ['Seguir regras de segurança', 'Não correr nas bordas', 'Respeitar altura mínima'],
+        agenda: 'Entrada a partir das 9h. Acesso livre a todas as atrações durante o dia. Recomendamos começar pelas atrações mais concorridas. Parque funciona até 17h.',
+        availableDays: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'],
         specialistLibrary: {
           pdf: 'https://exemplo.com/beach-park-info.pdf',
           banner1: 'https://exemplo.com/banner-beach-park.jpg',
@@ -510,6 +600,8 @@ const categoriesData = {
         id: 11,
         name: 'Passeio de Catamarã',
         price: 'R$ 120,00',
+        costPrice: 'R$ 84,00',
+        netValue: 'R$ 36,00',
         description: 'Navegue pelas belas águas do litoral cearense',
         duration: '4 horas',
         people: 'Por pessoa',
@@ -520,6 +612,8 @@ const categoriesData = {
         highlights: ['Águas cristalinas', 'Paradas para banho', 'Bebidas inclusas', 'Equipamentos fornecidos'],
         importantNotes: ['Sujeito a condições climáticas', 'Levar protetor solar', 'Roupas de banho'],
         rules: ['Seguir instruções da tripulação', 'Colete salva-vidas obrigatório', 'Não pular da embarcação'],
+        agenda: 'Embarque às 8h no pier. Navegação pela costa com paradas para banho em águas cristalinas. Lanche e bebidas servidos a bordo. Retorno previsto para 12h.',
+        availableDays: ['Segunda', 'Quarta', 'Sexta', 'Sábado', 'Domingo'],
         specialistLibrary: {
           pdf: 'https://exemplo.com/catamara-passeio.pdf',
           banner1: 'https://exemplo.com/banner-catamara.jpg',
@@ -533,6 +627,8 @@ const categoriesData = {
         id: 12,
         name: 'Kitesurf - Aula Iniciante',
         price: 'R$ 200,00',
+        costPrice: 'R$ 140,00',
+        netValue: 'R$ 60,00',
         description: 'Aprenda kitesurf com instrutores certificados',
         duration: '2 horas',
         people: 'Por pessoa',
@@ -543,6 +639,8 @@ const categoriesData = {
         highlights: ['Instrutores certificados', 'Equipamentos inclusos', 'Seguro incluso', 'Ventos ideais'],
         importantNotes: ['Saber nadar é obrigatório', 'Condições climáticas favoráveis', 'Idade mínima 12 anos'],
         rules: ['Seguir instruções do professor', 'Usar equipamentos de segurança', 'Respeitar outros praticantes'],
+        agenda: 'Aula teórica de 30 minutos sobre segurança e técnicas básicas. 1h30 de prática na água com acompanhamento do instrutor. Equipamentos fornecidos durante toda a aula.',
+        availableDays: ['Terça', 'Quinta', 'Sábado', 'Domingo'],
         specialistLibrary: {
           pdf: 'https://exemplo.com/kitesurf-iniciante.pdf',
           banner1: 'https://exemplo.com/banner-kitesurf.jpg',
@@ -562,6 +660,8 @@ const categoriesData = {
         id: 13,
         name: 'Transfer Privativo Aeroporto',
         price: 'R$ 120,00',
+        costPrice: 'R$ 85,00',
+        netValue: 'R$ 35,00',
         description: 'Transporte exclusivo do/para aeroporto',
         duration: '45 min',
         people: 'Até 4 pessoas',
@@ -572,6 +672,8 @@ const categoriesData = {
         highlights: ['Veículo exclusivo', 'Motorista experiente', 'Horário flexível', 'Conforto total'],
         importantNotes: ['Informar horário do voo', 'Contato do motorista fornecido', 'Tolerância de 30min'],
         rules: ['Respeitar horário combinado', 'Bagagem conforme capacidade', 'Tratar motorista com respeito'],
+        agenda: 'Motorista aguarda no aeroporto com placa identificadora. Transfer direto ao destino sem paradas. Tempo de viagem aproximado de 45 minutos dependendo do trânsito.',
+        availableDays: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'],
         specialistLibrary: {
           pdf: 'https://exemplo.com/transfer-privativo.pdf',
           banner1: 'https://exemplo.com/banner-transfer-privativo.jpg',
@@ -585,6 +687,8 @@ const categoriesData = {
         id: 14,
         name: 'Transfer Fortaleza - Jeri Privativo',
         price: 'R$ 450,00',
+        costPrice: 'R$ 315,00',
+        netValue: 'R$ 135,00',
         description: 'Viagem confortável e exclusiva para Jericoacoara',
         duration: '4 horas',
         people: 'Até 4 pessoas',
@@ -595,6 +699,8 @@ const categoriesData = {
         highlights: ['SUV 4x4 confortável', 'Paradas para fotos', 'Motorista local', 'Viagem exclusiva'],
         importantNotes: ['Estrada de terra nos últimos km', 'Levar água', 'Protetor solar recomendado'],
         rules: ['Usar cinto de segurança', 'Respeitar meio ambiente', 'Seguir orientações do motorista'],
+        agenda: 'Saída de Fortaleza no horário combinado. Parada técnica em Jijoca para lanche (opcional). Trecho final em veículo 4x4 pelas dunas. Chegada em Jericoacoara após 4 horas.',
+        availableDays: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'],
         specialistLibrary: {
           pdf: 'https://exemplo.com/transfer-jeri-privativo.pdf',
           banner1: 'https://exemplo.com/banner-jeri-transfer.jpg',
@@ -614,6 +720,8 @@ const categoriesData = {
         id: 15,
         name: 'Passeio Privativo Jericoacoara',
         price: 'R$ 380,00',
+        costPrice: 'R$ 266,00',
+        netValue: 'R$ 114,00',
         description: 'Explore Jeri com guia exclusivo e roteiro personalizado',
         duration: 'Dia inteiro',
         people: 'Até 4 pessoas',
@@ -624,6 +732,8 @@ const categoriesData = {
         highlights: ['Guia exclusivo', 'Roteiro personalizado', 'Transporte 4x4', 'Almoço incluso'],
         importantNotes: ['Roteiro sujeito a maré', 'Levar protetor solar', 'Roupas confortáveis'],
         rules: ['Respeitar meio ambiente', 'Seguir orientações do guia', 'Não alimentar animais'],
+        agenda: 'Manhã: Visita à Pedra Furada e lagoas. Almoço em restaurante local. Tarde: Dunas e pôr do sol. Roteiro flexível conforme interesse do grupo.',
+        availableDays: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'],
         specialistLibrary: {
           pdf: 'https://exemplo.com/passeio-jeri-privativo.pdf',
           banner1: 'https://exemplo.com/banner-passeio-jeri.jpg',
@@ -637,6 +747,8 @@ const categoriesData = {
         id: 16,
         name: 'Rota das Emoções Privativa',
         price: 'R$ 650,00',
+        costPrice: 'R$ 455,00',
+        netValue: 'R$ 195,00',
         description: 'Conheça os Lençóis Maranhenses com conforto e exclusividade',
         duration: '2 dias',
         people: 'Até 4 pessoas',
@@ -647,6 +759,8 @@ const categoriesData = {
         highlights: ['Lençóis Maranhenses', 'Guia especializado', 'Hospedagem inclusa', 'Todas refeições', 'Transporte 4x4'],
         importantNotes: ['Época ideal: maio a setembro', 'Levar repelente', 'Roupas leves e protetor solar'],
         rules: ['Preservar meio ambiente', 'Não deixar lixo', 'Seguir trilhas demarcadas'],
+        agenda: 'Dia 1: Saída para Barreirinhas, visita aos Lençóis e lagoas. Dia 2: Passeio de barco pelo Rio Preguiças e retorno. Hospedagem e refeições incluídas.',
+        availableDays: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'],
         specialistLibrary: {
           pdf: 'https://exemplo.com/rota-emocoes-privativa.pdf',
           banner1: 'https://exemplo.com/banner-lencois-maranhenses.jpg',
@@ -654,6 +768,126 @@ const categoriesData = {
           video1: 'https://exemplo.com/video-lencois-maranhenses.mp4',
           bannerEnglish: 'https://exemplo.com/banner-lencois-en.jpg',
           bannerSpanish: 'https://exemplo.com/banner-lencois-es.jpg'
+        }
+      }
+    ]
+  },
+  'apenas-hospedagens': {
+    name: 'Apenas Hospedagens',
+    icon: '🏨',
+    products: [
+      {
+        id: 17,
+        name: 'Pousada Centro Jericoacoara',
+        price: 'R$ 180,00',
+        costPrice: 'R$ 144,00',
+        netValue: 'R$ 36,00',
+        description: 'Hospedagem simples e confortável no centro de Jeri',
+        duration: 'Por noite',
+        people: 'Casal',
+        includes: ['Quarto com ar condicionado', 'Café da manhã', 'Wi-Fi'],
+        notIncludes: ['Transfer', 'Refeições extras', 'Passeios', 'Bebidas'],
+        serviceDescription: 'Pousada localizada no centro de Jericoacoara, próxima aos principais pontos turísticos.',
+        aboutService: 'Ideal para quem busca hospedagem econômica e bem localizada. Ambiente familiar e acolhedor.',
+        highlights: ['Localização central', 'Café da manhã incluso', 'Wi-Fi gratuito', 'Ambiente familiar'],
+        importantNotes: ['Check-in 14h', 'Check-out 12h', 'Não permite animais'],
+        rules: ['Silêncio após 22h', 'Não fumar nos quartos', 'Respeitar outros hóspedes'],
+        agenda: 'Check-in a partir das 14h. Café da manhã servido das 7h às 10h. Check-out até 12h. Localização permite fácil acesso a pé aos principais pontos turísticos.',
+        availableDays: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'],
+        specialistLibrary: {
+          pdf: 'https://exemplo.com/pousada-centro-jeri.pdf',
+          banner1: 'https://exemplo.com/banner-pousada-jeri.jpg',
+          banner2: 'https://exemplo.com/banner-hospedagem-centro.jpg',
+          video1: 'https://exemplo.com/video-pousada-jeri.mp4',
+          bannerEnglish: 'https://exemplo.com/banner-inn-jeri-en.jpg',
+          bannerSpanish: 'https://exemplo.com/banner-posada-jeri-es.jpg'
+        }
+      },
+      {
+        id: 18,
+        name: 'Hotel Beira-mar Fortaleza',
+        price: 'R$ 250,00',
+        costPrice: 'R$ 200,00',
+        netValue: 'R$ 50,00',
+        description: 'Hotel confortável na orla de Fortaleza',
+        duration: 'Por noite',
+        people: 'Casal',
+        includes: ['Quarto vista mar', 'Café da manhã', 'Piscina', 'Academia'],
+        notIncludes: ['Transfer', 'Almoço e jantar', 'Bebidas', 'Estacionamento'],
+        serviceDescription: 'Hotel moderno localizado na orla de Fortaleza com vista para o mar.',
+        aboutService: 'Perfeito para quem quer ficar próximo às praias e ao centro da cidade. Estrutura completa de lazer.',
+        highlights: ['Vista para o mar', 'Piscina', 'Academia', 'Localização privilegiada'],
+        importantNotes: ['Estacionamento pago', 'Check-in 15h', 'Check-out 12h'],
+        rules: ['Área da piscina até 22h', 'Não fumar nas dependências', 'Dress code no restaurante'],
+        agenda: 'Check-in a partir das 15h. Café da manhã das 6h às 10h. Piscina e academia disponíveis das 6h às 22h. Check-out até 12h.',
+        availableDays: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'],
+        specialistLibrary: {
+          pdf: 'https://exemplo.com/hotel-beira-mar-fortaleza.pdf',
+          banner1: 'https://exemplo.com/banner-hotel-fortaleza.jpg',
+          banner2: 'https://exemplo.com/banner-vista-mar.jpg',
+          video1: 'https://exemplo.com/video-hotel-fortaleza.mp4',
+          bannerEnglish: 'https://exemplo.com/banner-hotel-fortaleza-en.jpg',
+          bannerSpanish: 'https://exemplo.com/banner-hotel-fortaleza-es.jpg'
+        }
+      }
+    ]
+  },
+  'outros': {
+    name: 'Outros',
+    icon: '⭐',
+    products: [
+      {
+        id: 19,
+        name: 'Consultoria Turística Personalizada',
+        price: 'R$ 150,00',
+        costPrice: 'R$ 105,00',
+        netValue: 'R$ 45,00',
+        description: 'Planejamento completo da sua viagem com especialista',
+        duration: '2 horas',
+        people: 'Por consulta',
+        includes: ['Consulta especializada', 'Roteiro personalizado', 'Dicas exclusivas'],
+        notIncludes: ['Reservas', 'Pagamentos de serviços', 'Acompanhamento presencial'],
+        serviceDescription: 'Serviço de consultoria para planejamento personalizado de viagens pelo Ceará.',
+        aboutService: 'Nossos especialistas criam roteiros únicos baseados no seu perfil e preferências.',
+        highlights: ['Roteiro personalizado', 'Especialista dedicado', 'Dicas exclusivas', 'Economia de tempo'],
+        importantNotes: ['Agendamento prévio', 'Consulta online ou presencial', 'Material entregue por email'],
+        rules: ['Pontualidade', 'Informações precisas sobre preferências', 'Pagamento antecipado'],
+        agenda: 'Consulta inicial para entender perfil e preferências. Análise e criação do roteiro personalizado. Apresentação do roteiro com dicas e sugestões exclusivas.',
+        availableDays: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'],
+        specialistLibrary: {
+          pdf: 'https://exemplo.com/consultoria-turistica.pdf',
+          banner1: 'https://exemplo.com/banner-consultoria.jpg',
+          banner2: 'https://exemplo.com/banner-planejamento.jpg',
+          video1: 'https://exemplo.com/video-consultoria.mp4',
+          bannerEnglish: 'https://exemplo.com/banner-consulting-en.jpg',
+          bannerSpanish: 'https://exemplo.com/banner-consultoria-es.jpg'
+        }
+      },
+      {
+        id: 20,
+        name: 'Seguro Viagem Ceará',
+        price: 'R$ 25,00',
+        costPrice: 'R$ 18,00',
+        netValue: 'R$ 7,00',
+        description: 'Proteção completa durante sua estadia no Ceará',
+        duration: 'Por dia',
+        people: 'Por pessoa',
+        includes: ['Cobertura médica', 'Assistência 24h', 'Cobertura bagagem'],
+        notIncludes: ['Doenças preexistentes', 'Esportes radicais', 'Atos imprudentes'],
+        serviceDescription: 'Seguro viagem específico para turistas no Ceará com cobertura completa.',
+        aboutService: 'Proteção essencial para sua tranquilidade durante a viagem. Cobertura nacional com foco regional.',
+        highlights: ['Assistência 24h', 'Cobertura médica', 'Proteção bagagem', 'Preço acessível'],
+        importantNotes: ['Contratar antes da viagem', 'Documentos necessários', 'Carência de 24h'],
+        rules: ['Informar condições preexistentes', 'Guardar comprovantes', 'Comunicar sinistros imediatamente'],
+        agenda: 'Contratação online ou presencial. Cobertura inicia 24h após contratação. Assistência disponível 24h por telefone. Válido durante todo período da viagem.',
+        availableDays: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'],
+        specialistLibrary: {
+          pdf: 'https://exemplo.com/seguro-viagem-ceara.pdf',
+          banner1: 'https://exemplo.com/banner-seguro-viagem.jpg',
+          banner2: 'https://exemplo.com/banner-protecao.jpg',
+          video1: 'https://exemplo.com/video-seguro-viagem.mp4',
+          bannerEnglish: 'https://exemplo.com/banner-travel-insurance-en.jpg',
+          bannerSpanish: 'https://exemplo.com/banner-seguro-viaje-es.jpg'
         }
       }
     ]
@@ -1109,6 +1343,82 @@ const PricingDetails = ({ product, categoryKey }) => {
   )
 }
 
+// Componente do Pop-up de Notificações
+const NotificationsPopup = ({ isOpen, onClose }) => {
+  if (!isOpen) return null
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[80vh] overflow-hidden">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Bell className="w-6 h-6" />
+            <h2 className="text-lg font-semibold">Novidades e Destaques</h2>
+          </div>
+          <button
+            onClick={onClose}
+            className="text-white hover:text-gray-200 transition-colors duration-200"
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+
+        {/* Lista de Notificações */}
+        <div className="max-h-96 overflow-y-auto">
+          {notificationsData.map((notification) => (
+            <div
+              key={notification.id}
+              className="p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors duration-200"
+            >
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0">
+                  {notification.isNew && (
+                    <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                  )}
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-gray-800 mb-1">
+                    {notification.title}
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-2">
+                    {notification.message}
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-gray-400">
+                      {new Date(notification.date).toLocaleDateString('pt-BR')}
+                    </span>
+                    <span className={`text-xs px-2 py-1 rounded-full ${
+                      notification.type === 'promotion' ? 'bg-orange-100 text-orange-700' :
+                      notification.type === 'new-service' ? 'bg-green-100 text-green-700' :
+                      notification.type === 'tip' ? 'bg-blue-100 text-blue-700' :
+                      notification.type === 'update' ? 'bg-purple-100 text-purple-700' :
+                      'bg-gray-100 text-gray-700'
+                    }`}>
+                      {notification.type === 'promotion' ? 'Promoção' :
+                       notification.type === 'new-service' ? 'Novo' :
+                       notification.type === 'tip' ? 'Dica' :
+                       notification.type === 'update' ? 'Atualização' :
+                       'Lembrete'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Footer */}
+        <div className="p-4 bg-gray-50 text-center">
+          <p className="text-sm text-gray-600">
+            {notificationsData.filter(n => n.isNew).length} novas notificações
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function Portal() {
   const [currentView, setCurrentView] = useState('home') // 'home', 'category', 'product', 'triggers'
   const [selectedCategory, setSelectedCategory] = useState(null)
@@ -1116,6 +1426,12 @@ export default function Portal() {
   const [searchTerm, setSearchTerm] = useState('')
   const [categorySearchTerm, setCategorySearchTerm] = useState('')
   const [copiedTrigger, setCopiedTrigger] = useState('')
+  const [showNotifications, setShowNotifications] = useState(false)
+
+  // Estados para filtros inteligentes
+  const [showFilters, setShowFilters] = useState(false)
+  const [priceRange, setPriceRange] = useState([0, 5000])
+  const [selectedDays, setSelectedDays] = useState([])
 
   // Função de busca que procura em todos os produtos (página inicial)
   const searchResults = useMemo(() => {
@@ -1140,22 +1456,59 @@ export default function Portal() {
     return results
   }, [searchTerm])
 
-  // Função de busca específica da categoria
-  const categorySearchResults = useMemo(() => {
-    if (!categorySearchTerm.trim() || !selectedCategory) return categoriesData[selectedCategory]?.products || []
+  // Função para extrair valor numérico do preço
+  const extractPrice = (priceString) => {
+    if (!priceString) return 0
+    const numericValue = priceString.replace(/[^\d,]/g, '').replace(',', '.')
+    return parseFloat(numericValue) || 0
+  }
+
+  // Função de busca específica da categoria com filtros
+  const getCategorySearchResults = () => {
+    if (!selectedCategory) return []
     
     const category = categoriesData[selectedCategory]
-    return category.products.filter(product =>
-      product.name.toLowerCase().includes(categorySearchTerm.toLowerCase()) ||
-      product.description.toLowerCase().includes(categorySearchTerm.toLowerCase())
-    )
-  }, [categorySearchTerm, selectedCategory])
+    if (!category) return []
+    
+    let products = category.products
+
+    // Aplicar filtro de busca por texto
+    if (categorySearchTerm.trim()) {
+      products = products.filter(product =>
+        product.name.toLowerCase().includes(categorySearchTerm.toLowerCase()) ||
+        product.description.toLowerCase().includes(categorySearchTerm.toLowerCase())
+      )
+    }
+
+    // Aplicar filtro de preço
+    products = products.filter(product => {
+      const price = extractPrice(product.price)
+      return price >= priceRange[0] && price <= priceRange[1]
+    })
+
+    // Aplicar filtro de dias (apenas para categorias aplicáveis)
+    const applicableCategories = ['servicos-regulares', 'ingressos-atividades']
+    if (selectedDays.length > 0 && applicableCategories.includes(selectedCategory)) {
+      products = products.filter(product => {
+        if (!product.availableDays) return true
+        return selectedDays.some(day => product.availableDays.includes(day))
+      })
+    }
+
+    return products
+  }
+
+  const categorySearchResults = getCategorySearchResults()
 
   const handleCategoryClick = (categoryKey) => {
     setSelectedCategory(categoryKey)
     setCurrentView('category')
     setSearchTerm('')
     setCategorySearchTerm('')
+    // Reset filtros
+    setPriceRange([0, 5000])
+    setSelectedDays([])
+    setShowFilters(false)
   }
 
   const handleProductClick = (product, categoryKey = null) => {
@@ -1170,6 +1523,10 @@ export default function Portal() {
     setSelectedProduct(null)
     setSearchTerm('')
     setCategorySearchTerm('')
+    // Reset filtros
+    setPriceRange([0, 5000])
+    setSelectedDays([])
+    setShowFilters(false)
   }
 
   const handleBackToCategory = () => {
@@ -1187,6 +1544,24 @@ export default function Portal() {
     setCopiedTrigger(triggerId)
     setTimeout(() => setCopiedTrigger(''), 2000)
   }
+
+  // Função para alternar dias selecionados
+  const toggleDay = (day) => {
+    setSelectedDays(prev => 
+      prev.includes(day) 
+        ? prev.filter(d => d !== day)
+        : [...prev, day]
+    )
+  }
+
+  // Função para limpar filtros
+  const clearFilters = () => {
+    setPriceRange([0, 5000])
+    setSelectedDays([])
+  }
+
+  // Verificar se há filtros ativos
+  const hasActiveFilters = priceRange[0] > 0 || priceRange[1] < 5000 || selectedDays.length > 0
 
   // Renderização da página de gatilhos
   if (currentView === 'triggers') {
@@ -1289,8 +1664,24 @@ export default function Portal() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-3 sm:p-4 md:p-6">
         <div className="max-w-7xl mx-auto">
-          {/* Header com Logo - Subindo mais para o topo */}
-          <div className="text-center mb-3 sm:mb-4 pt-0 -mt-2 sm:-mt-3 md:-mt-4">
+          {/* Header com Logo e Sino de Notificações */}
+          <div className="text-center mb-3 sm:mb-4 pt-0 -mt-2 sm:-mt-3 md:-mt-4 relative">
+            {/* Sino de Notificações - Posicionado no canto superior direito */}
+            <div className="absolute top-0 right-0">
+              <button
+                onClick={() => setShowNotifications(true)}
+                className="relative bg-white p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110 border border-gray-200"
+              >
+                <Bell className="w-6 h-6 text-gray-600" />
+                {/* Indicador de novas notificações */}
+                {notificationsData.filter(n => n.isNew).length > 0 && (
+                  <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+                    {notificationsData.filter(n => n.isNew).length}
+                  </div>
+                )}
+              </button>
+            </div>
+
             <div className="flex justify-center mb-0">
               <img 
                 src="https://k6hrqrxuu8obbfwn.public.blob.vercel-storage.com/temp/2efe1f8e-9651-4a63-a0b0-b55a0fc6644f.png" 
@@ -1424,6 +1815,12 @@ export default function Portal() {
               </div>
             </div>
           </div>
+
+          {/* Pop-up de Notificações */}
+          <NotificationsPopup 
+            isOpen={showNotifications} 
+            onClose={() => setShowNotifications(false)} 
+          />
         </div>
       </div>
     )
@@ -1432,6 +1829,8 @@ export default function Portal() {
   // Renderização da página de categoria
   if (currentView === 'category') {
     const category = categoriesData[selectedCategory]
+    const applicableCategories = ['servicos-regulares', 'ingressos-atividades']
+    const showDayFilter = applicableCategories.includes(selectedCategory)
     
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-3 sm:p-4 md:p-6">
@@ -1454,7 +1853,7 @@ export default function Portal() {
               <p className="text-gray-600 mt-2 text-sm sm:text-base mb-1">
                 {categoryPageDescriptions[selectedCategory]}
               </p>
-              <p className="text-gray-500 text-xs sm:text-sm">{category.products.length} serviços disponíveis</p>
+              <p className="text-gray-500 text-xs sm:text-sm">{categorySearchResults.length} serviços disponíveis</p>
             </div>
           </div>
 
@@ -1472,7 +1871,144 @@ export default function Portal() {
             </div>
           </div>
 
-          {/* Grid de Produtos - REMOVIDO informações de duração dos cards */}
+          {/* Filtros Inteligentes */}
+          <div className="mb-6 sm:mb-8">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-4">
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg ${
+                  hasActiveFilters 
+                    ? 'bg-blue-500 text-white' 
+                    : 'bg-white text-gray-700 border-2 border-gray-300 hover:bg-gray-100 hover:border-gray-400'
+                }`}
+              >
+                <Filter className="w-5 h-5" />
+                Filtros Inteligentes
+                {hasActiveFilters && (
+                  <span className="bg-white text-blue-500 px-2 py-1 rounded-full text-xs font-bold">
+                    Ativos
+                  </span>
+                )}
+              </button>
+
+              {hasActiveFilters && (
+                <div className="flex flex-wrap items-center gap-2">
+                  {(priceRange[0] > 0 || priceRange[1] < 5000) && (
+                    <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm flex items-center gap-2">
+                      Preço: R$ {priceRange[0]} - R$ {priceRange[1]}
+                      <button
+                        onClick={() => setPriceRange([0, 5000])}
+                        className="hover:bg-blue-200 rounded-full p-1"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </span>
+                  )}
+                  {selectedDays.map(day => (
+                    <span key={day} className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm flex items-center gap-2">
+                      {day}
+                      <button
+                        onClick={() => toggleDay(day)}
+                        className="hover:bg-green-200 rounded-full p-1"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </span>
+                  ))}
+                  <button
+                    onClick={clearFilters}
+                    className="text-gray-500 hover:text-gray-700 text-sm underline"
+                  >
+                    Limpar todos
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Painel de Filtros */}
+            {showFilters && (
+              <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-4 sm:p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Filtro de Preço */}
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                      <DollarSign className="w-5 h-5 text-green-600" />
+                      Faixa de Preço
+                    </h3>
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-4">
+                        <div className="flex-1">
+                          <label className="block text-sm text-gray-600 mb-2">Mínimo</label>
+                          <input
+                            type="number"
+                            value={priceRange[0]}
+                            onChange={(e) => setPriceRange([parseInt(e.target.value) || 0, priceRange[1]])}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none"
+                            placeholder="0"
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <label className="block text-sm text-gray-600 mb-2">Máximo</label>
+                          <input
+                            type="number"
+                            value={priceRange[1]}
+                            onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value) || 5000])}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none"
+                            placeholder="5000"
+                          />
+                        </div>
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        Mostrando serviços de R$ {priceRange[0]} até R$ {priceRange[1]}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Filtro de Dias da Semana */}
+                  {showDayFilter && (
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                        <Calendar className="w-5 h-5 text-blue-600" />
+                        Dias de Disponibilidade
+                      </h3>
+                      <div className="grid grid-cols-2 gap-2">
+                        {['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'].map(day => (
+                          <button
+                            key={day}
+                            onClick={() => toggleDay(day)}
+                            className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                              selectedDays.includes(day)
+                                ? 'bg-blue-500 text-white'
+                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            }`}
+                          >
+                            {day}
+                          </button>
+                        ))}
+                      </div>
+                      {selectedDays.length > 0 && (
+                        <div className="mt-3 text-sm text-gray-600">
+                          Filtrando por: {selectedDays.join(', ')}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Contador de Resultados */}
+          <div className="mb-4 text-center">
+            <p className="text-gray-600">
+              {categorySearchResults.length === 0 ? 'Nenhum serviço encontrado' : 
+               categorySearchResults.length === 1 ? '1 serviço encontrado' :
+               `${categorySearchResults.length} serviços encontrados`}
+              {hasActiveFilters && ' com os filtros aplicados'}
+            </p>
+          </div>
+
+          {/* Grid de Produtos */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
             {categorySearchResults.map((product) => (
               <div
@@ -1488,11 +2024,24 @@ export default function Portal() {
                     <h3 className="text-base sm:text-lg md:text-xl font-semibold text-gray-800 mb-2 sm:mb-3">{product.name}</h3>
                     <p className="text-gray-600 text-sm sm:text-base mb-3 sm:mb-4">{product.description}</p>
                     
-                    <div className="flex flex-col gap-2 text-sm text-gray-500 mb-4 sm:mb-6">
+                    <div className="flex flex-col gap-2 text-sm text-gray-500 mb-3 sm:mb-4">
                       <div className="flex items-center gap-2">
                         <Users className="w-4 h-4" />
                         <span>{product.people}</span>
                       </div>
+                      {/* Mostrar dias disponíveis se aplicável */}
+                      {showDayFilter && product.availableDays && (
+                        <div className="flex items-start gap-2">
+                          <Calendar className="w-4 h-4 mt-0.5" />
+                          <div className="flex flex-wrap gap-1">
+                            {product.availableDays.map(day => (
+                              <span key={day} className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs">
+                                {day}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                   
@@ -1510,12 +2059,22 @@ export default function Portal() {
             ))}
           </div>
 
-          {/* Mensagem quando não há resultados na busca */}
-          {categorySearchTerm && categorySearchResults.length === 0 && (
+          {/* Mensagem quando não há resultados */}
+          {categorySearchResults.length === 0 && (
             <div className="text-center py-12">
               <Search className="w-16 h-16 mx-auto mb-4 text-gray-300" />
               <h3 className="text-xl font-semibold text-gray-600 mb-2">Nenhum serviço encontrado</h3>
-              <p className="text-gray-500">Tente buscar com outros termos em "{category.name}"</p>
+              <p className="text-gray-500 mb-4">
+                {categorySearchTerm ? `Nenhum resultado para "${categorySearchTerm}"` : 'Nenhum serviço corresponde aos filtros aplicados'}
+              </p>
+              {hasActiveFilters && (
+                <button
+                  onClick={clearFilters}
+                  className="text-blue-600 hover:text-blue-800 font-medium underline"
+                >
+                  Limpar filtros e ver todos os serviços
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -1559,7 +2118,7 @@ export default function Portal() {
                 
                 <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 mb-3">{selectedProduct.name}</h1>
                 
-                {/* Breve descrição abaixo do nome - REMOVIDO informações de duração */}
+                {/* Breve descrição abaixo do nome */}
                 <p className="text-gray-600 text-sm sm:text-base mb-6">{selectedProduct.description}</p>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 md:gap-8 mb-8">
@@ -1577,6 +2136,15 @@ export default function Portal() {
                       <p className="text-sm text-gray-500">Valor</p>
                       <p className="text-xl sm:text-2xl md:text-3xl font-bold text-green-600">{selectedProduct.price}</p>
                       <p className="text-xs text-gray-500">Valor de venda.</p>
+                      {/* Mostrar preço de custo e valor net para TODOS os serviços */}
+                      <div className="mt-2 space-y-1">
+                        <p className="text-sm text-gray-600">
+                          <span className="font-medium">Preço de Custo:</span> {selectedProduct.costPrice}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          <span className="font-medium">Valor Net:</span> {selectedProduct.netValue}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1599,7 +2167,7 @@ export default function Portal() {
                   <ExpandableText text={selectedProduct.aboutService} />
                 </div>
 
-                {/* Duração - MANTIDO apenas na seção de entrega */}
+                {/* Duração */}
                 <div className="bg-orange-50 rounded-2xl p-4 sm:p-6">
                   <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
                     <Clock className="w-5 h-5 text-orange-600" />
@@ -1679,7 +2247,16 @@ export default function Portal() {
                   </div>
                 </div>
 
-                {/* Detalhes de precificação - APENAS para categorias de pacotes - MOVIDO PARA BAIXO DAS NORMAS */}
+                {/* Agenda */}
+                <div className="bg-indigo-50 rounded-2xl p-4 sm:p-6">
+                  <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                    <Calendar className="w-5 h-5 text-indigo-600" />
+                    Agenda
+                  </h3>
+                  <ExpandableText text={selectedProduct.agenda} />
+                </div>
+
+                {/* Detalhes de precificação - APENAS para categorias de pacotes */}
                 {isPackageCategory && (
                   <PricingDetails product={selectedProduct} categoryKey={selectedCategory} />
                 )}
