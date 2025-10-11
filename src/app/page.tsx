@@ -3,6 +3,42 @@
 import { useState, useMemo } from 'react'
 import { Search, ArrowLeft, MapPin, Clock, Users, DollarSign, Copy, CheckCircle, XCircle, FileText, Image, Video, Globe, ChevronDown, ChevronUp, Calendar, Star, TrendingUp, Zap, Shield, Award, Gift, Heart, MessageCircle, CreditCard, Filter, X, Home, Bed, Package, Bell } from 'lucide-react'
 
+// Type definitions
+type Product = {
+  id: number;
+  name: string;
+  price: string;
+  costPrice: string;
+  netValue: string;
+  description: string;
+  duration: string;
+  people: string;
+  includes: string[];
+  notIncludes: string[];
+  serviceDescription: string;
+  aboutService: string;
+  highlights: string[];
+  importantNotes: string[];
+  rules: string[];
+  agenda: string;
+  availableDays: string[];
+  specialistLibrary: {
+    pdf: string;
+    banner1: string;
+    banner2: string;
+    video1: string;
+    bannerEnglish: string;
+    bannerSpanish: string;
+  };
+  pricingDetails?: {
+    seasons: any;
+    accommodationTypes: any;
+    occupancy: any;
+  };
+};
+
+type CategoryKey = string;
+
 // Cores específicas solicitadas para cada categoria
 const categoryColors = {
   'pacotes-jericoacoara': 'from-blue-400 to-blue-500',
@@ -895,7 +931,7 @@ const categoriesData = {
 }
 
 // Componente para texto com "ver mais"
-const ExpandableText = ({ text, maxLength = 200 }) => {
+const ExpandableText = ({ text, maxLength = 200 }: { text: string; maxLength?: number }) => {
   const [isExpanded, setIsExpanded] = useState(false)
   
   if (text.length <= maxLength) {
@@ -928,10 +964,10 @@ const ExpandableText = ({ text, maxLength = 200 }) => {
 }
 
 // Componente para biblioteca do especialista com links individuais por categoria
-const SpecialistLibrarySection = ({ product, categoryKey }) => {
+const SpecialistLibrarySection = ({ product, categoryKey }: { product: Product; categoryKey: CategoryKey }) => {
   const [copiedLink, setCopiedLink] = useState('')
   
-  const copyToClipboard = (link, type) => {
+  const copyToClipboard = (link: string, type: string) => {
     navigator.clipboard.writeText(link)
     setCopiedLink(`${type}-${product.id}`)
     setTimeout(() => setCopiedLink(''), 2000)
@@ -1101,13 +1137,13 @@ const SpecialistLibrarySection = ({ product, categoryKey }) => {
 }
 
 // Componente para detalhes de precificação
-const PricingDetails = ({ product, categoryKey }) => {
+const PricingDetails = ({ product, categoryKey }: { product: Product; categoryKey: CategoryKey }) => {
   const { pricingDetails } = product
   const [copiedLink, setCopiedLink] = useState('')
   
   if (!pricingDetails) return null
 
-  const copyToClipboard = (link, type) => {
+  const copyToClipboard = (link: string, type: string) => {
     navigator.clipboard.writeText(link)
     setCopiedLink(`${type}-${product.id}`)
     setTimeout(() => setCopiedLink(''), 2000)
@@ -1135,7 +1171,7 @@ const PricingDetails = ({ product, categoryKey }) => {
                 <span className="font-medium text-gray-800">Alta Temporada</span>
               </div>
               <div className="space-y-1">
-                {pricingDetails.seasons.high.period.map((month, index) => (
+                {pricingDetails.seasons.high.period.map((month: string, index: number) => (
                   <p key={index} className="text-sm text-gray-600">{month}</p>
                 ))}
               </div>
@@ -1148,7 +1184,7 @@ const PricingDetails = ({ product, categoryKey }) => {
                 <span className="font-medium text-gray-800">Baixa Temporada</span>
               </div>
               <div className="space-y-1">
-                {pricingDetails.seasons.low.period.map((month, index) => (
+                {pricingDetails.seasons.low.period.map((month: string, index: number) => (
                   <p key={index} className="text-sm text-gray-600">{month}</p>
                 ))}
               </div>
@@ -1163,7 +1199,7 @@ const PricingDetails = ({ product, categoryKey }) => {
             Categorias de Hospedagem
           </h4>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {Object.entries(pricingDetails.accommodationTypes).map(([key, accommodation]) => (
+            {Object.entries(pricingDetails.accommodationTypes).map(([key, accommodation]: [string, any]) => (
               <div key={key} className="bg-white rounded-xl p-4 border border-gray-200">
                 <h5 className="font-medium text-gray-800 mb-4 text-center">{accommodation.name}</h5>
                 
@@ -1344,7 +1380,7 @@ const PricingDetails = ({ product, categoryKey }) => {
 }
 
 // Componente do Pop-up de Notificações
-const NotificationsPopup = ({ isOpen, onClose }) => {
+const NotificationsPopup = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   if (!isOpen) return null
 
   return (
@@ -1420,26 +1456,26 @@ const NotificationsPopup = ({ isOpen, onClose }) => {
 }
 
 export default function Portal() {
-  const [currentView, setCurrentView] = useState('home') // 'home', 'category', 'product', 'triggers'
-  const [selectedCategory, setSelectedCategory] = useState(null)
-  const [selectedProduct, setSelectedProduct] = useState(null)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [categorySearchTerm, setCategorySearchTerm] = useState('')
-  const [copiedTrigger, setCopiedTrigger] = useState('')
-  const [showNotifications, setShowNotifications] = useState(false)
+  const [currentView, setCurrentView] = useState<string>('home') // 'home', 'category', 'product', 'triggers'
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
+  const [searchTerm, setSearchTerm] = useState<string>('')
+  const [categorySearchTerm, setCategorySearchTerm] = useState<string>('')
+  const [copiedTrigger, setCopiedTrigger] = useState<string>('')
+  const [showNotifications, setShowNotifications] = useState<boolean>(false)
 
   // Estados para filtros inteligentes
-  const [showFilters, setShowFilters] = useState(false)
-  const [priceRange, setPriceRange] = useState([0, 5000])
-  const [selectedDays, setSelectedDays] = useState([])
+  const [showFilters, setShowFilters] = useState<boolean>(false)
+  const [priceRange, setPriceRange] = useState<number[]>([0, 5000])
+  const [selectedDays, setSelectedDays] = useState<string[]>([])
 
   // Função de busca que procura em todos os produtos (página inicial)
   const searchResults = useMemo(() => {
     if (!searchTerm.trim()) return []
     
-    const results = []
-    Object.entries(categoriesData).forEach(([categoryKey, category]) => {
-      category.products.forEach(product => {
+    const results: any[] = []
+    Object.entries(categoriesData).forEach(([categoryKey, category]: [string, any]) => {
+      category.products.forEach((product: Product) => {
         if (
           product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -1457,7 +1493,7 @@ export default function Portal() {
   }, [searchTerm])
 
   // Função para extrair valor numérico do preço
-  const extractPrice = (priceString) => {
+  const extractPrice = (priceString: string) => {
     if (!priceString) return 0
     const numericValue = priceString.replace(/[^\d,]/g, '').replace(',', '.')
     return parseFloat(numericValue) || 0
@@ -1467,10 +1503,10 @@ export default function Portal() {
   const getCategorySearchResults = () => {
     if (!selectedCategory) return []
     
-    const category = categoriesData[selectedCategory]
+    const category: any = categoriesData[selectedCategory as keyof typeof categoriesData]
     if (!category) return []
     
-    let products = category.products
+    let products: Product[] = category.products
 
     // Aplicar filtro de busca por texto
     if (categorySearchTerm.trim()) {
@@ -1500,7 +1536,7 @@ export default function Portal() {
 
   const categorySearchResults = getCategorySearchResults()
 
-  const handleCategoryClick = (categoryKey) => {
+  const handleCategoryClick = (categoryKey: string) => {
     setSelectedCategory(categoryKey)
     setCurrentView('category')
     setSearchTerm('')
@@ -1511,7 +1547,7 @@ export default function Portal() {
     setShowFilters(false)
   }
 
-  const handleProductClick = (product, categoryKey = null) => {
+  const handleProductClick = (product: Product, categoryKey: string | null = null) => {
     setSelectedProduct(product)
     if (categoryKey) setSelectedCategory(categoryKey)
     setCurrentView('product')
@@ -1539,14 +1575,14 @@ export default function Portal() {
     setSearchTerm('')
   }
 
-  const copyTriggerLink = (link, triggerId) => {
+  const copyTriggerLink = (link: string, triggerId: string | number) => {
     navigator.clipboard.writeText(link)
-    setCopiedTrigger(triggerId)
+    setCopiedTrigger(String(triggerId))
     setTimeout(() => setCopiedTrigger(''), 2000)
   }
 
   // Função para alternar dias selecionados
-  const toggleDay = (day) => {
+  const toggleDay = (day: string) => {
     setSelectedDays(prev => 
       prev.includes(day) 
         ? prev.filter(d => d !== day)
@@ -1614,12 +1650,12 @@ export default function Portal() {
                     <button
                       onClick={() => copyTriggerLink(trigger.link, trigger.id)}
                       className={`w-full flex items-center justify-center gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-xl text-sm sm:text-base font-medium transition-all duration-300 transform hover:scale-105 shadow-sm hover:shadow-md ${
-                        copiedTrigger === trigger.id
+                        copiedTrigger === String(trigger.id)
                           ? 'bg-green-500 text-white border-2 border-green-500'
                           : 'border-2 border-gray-300 text-gray-700 hover:bg-gray-100 hover:border-gray-400'
                       }`}
                     >
-                      {copiedTrigger === trigger.id ? (
+                      {copiedTrigger === String(trigger.id) ? (
                         <>
                           <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" />
                           Copiado!
@@ -1744,21 +1780,21 @@ export default function Portal() {
 
           {/* Grid de Categorias - Responsivo com alinhamento padronizado */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
-            {Object.entries(categoriesData).map(([key, category]) => (
+            {Object.entries(categoriesData).map(([key, category]: [string, any]) => (
               <div
                 key={key}
                 onClick={() => handleCategoryClick(key)}
                 className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-2 border border-gray-100 overflow-hidden flex flex-col h-full"
               >
                 {/* Barra colorida no topo */}
-                <div className={`h-2 bg-gradient-to-r ${categoryColors[key]}`}></div>
+                <div className={`h-2 bg-gradient-to-r ${categoryColors[key as keyof typeof categoryColors]}`}></div>
                 
                 <div className="p-4 sm:p-5 md:p-6 text-center flex flex-col justify-between flex-1">
                   <div className="flex-1 flex flex-col justify-center">
                     <div className="text-3xl sm:text-4xl md:text-5xl mb-3 sm:mb-4">{category.icon}</div>
                     <h3 className="text-sm sm:text-base md:text-lg font-bold text-gray-800 mb-2 sm:mb-3 leading-tight">{category.name}</h3>
                     <p className="text-xs sm:text-sm md:text-base text-gray-600 mb-2 sm:mb-3 leading-relaxed">
-                      {categoryDescriptions[key]}
+                      {categoryDescriptions[key as keyof typeof categoryDescriptions]}
                     </p>
                     <p className="text-xs sm:text-sm text-gray-500 mb-4 sm:mb-6">
                       {category.products.length} {category.products.length === 1 ? 'serviço' : 'serviços'}
@@ -1827,8 +1863,8 @@ export default function Portal() {
   }
 
   // Renderização da página de categoria
-  if (currentView === 'category') {
-    const category = categoriesData[selectedCategory]
+  if (currentView === 'category' && selectedCategory) {
+    const category = categoriesData[selectedCategory as keyof typeof categoriesData]
     const applicableCategories = ['servicos-regulares', 'ingressos-atividades']
     const showDayFilter = applicableCategories.includes(selectedCategory)
     
@@ -1851,7 +1887,7 @@ export default function Portal() {
               </h1>
               {/* Descrição da categoria */}
               <p className="text-gray-600 mt-2 text-sm sm:text-base mb-1">
-                {categoryPageDescriptions[selectedCategory]}
+                {categoryPageDescriptions[selectedCategory as keyof typeof categoryPageDescriptions]}
               </p>
               <p className="text-gray-500 text-xs sm:text-sm">{categorySearchResults.length} serviços disponíveis</p>
             </div>
@@ -2017,7 +2053,7 @@ export default function Portal() {
                 className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-2 border border-gray-100 overflow-hidden flex flex-col h-full"
               >
                 {/* Barra colorida no topo */}
-                <div className={`h-2 bg-gradient-to-r ${categoryColors[selectedCategory]}`}></div>
+                <div className={`h-2 bg-gradient-to-r ${categoryColors[selectedCategory as keyof typeof categoryColors]}`}></div>
                 
                 <div className="p-4 sm:p-5 md:p-6 flex flex-col justify-between flex-1">
                   <div className="flex-1">
@@ -2083,8 +2119,8 @@ export default function Portal() {
   }
 
   // Renderização da página do produto
-  if (currentView === 'product') {
-    const category = categoriesData[selectedCategory]
+  if (currentView === 'product' && selectedProduct && selectedCategory) {
+    const category = categoriesData[selectedCategory as keyof typeof categoriesData]
     const isPackageCategory = packageCategories.includes(selectedCategory)
     
     return (
@@ -2104,7 +2140,7 @@ export default function Portal() {
           {/* Detalhes do Produto */}
           <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
             {/* Barra colorida no topo */}
-            <div className={`h-2 bg-gradient-to-r ${categoryColors[selectedCategory]}`}></div>
+            <div className={`h-2 bg-gradient-to-r ${categoryColors[selectedCategory as keyof typeof categoryColors]}`}></div>
             
             <div className="p-4 sm:p-6 md:p-8">
               <div className="mb-8">
@@ -2183,7 +2219,7 @@ export default function Portal() {
                     O que está incluído
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {selectedProduct.includes.map((item, index) => (
+                    {selectedProduct.includes.map((item: string, index: number) => (
                       <div key={index} className="flex items-center gap-3">
                         <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
                         <span className="text-gray-700">{item}</span>
@@ -2199,7 +2235,7 @@ export default function Portal() {
                     O que não está incluído
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {selectedProduct.notIncludes.map((item, index) => (
+                    {selectedProduct.notIncludes.map((item: string, index: number) => (
                       <div key={index} className="flex items-center gap-3">
                         <div className="w-2 h-2 bg-red-500 rounded-full flex-shrink-0"></div>
                         <span className="text-gray-700">{item}</span>
@@ -2212,7 +2248,7 @@ export default function Portal() {
                 <div className="bg-yellow-50 rounded-2xl p-4 sm:p-6">
                   <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4">Destaques</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {selectedProduct.highlights.map((item, index) => (
+                    {selectedProduct.highlights.map((item: string, index: number) => (
                       <div key={index} className="flex items-center gap-3">
                         <div className="w-2 h-2 bg-yellow-500 rounded-full flex-shrink-0"></div>
                         <span className="text-gray-700 font-medium">{item}</span>
@@ -2225,7 +2261,7 @@ export default function Portal() {
                 <div className="bg-amber-50 rounded-2xl p-4 sm:p-6">
                   <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4">Observações Importantes</h3>
                   <div className="space-y-2">
-                    {selectedProduct.importantNotes.map((note, index) => (
+                    {selectedProduct.importantNotes.map((note: string, index: number) => (
                       <div key={index} className="flex items-start gap-3">
                         <div className="w-2 h-2 bg-amber-500 rounded-full flex-shrink-0 mt-2"></div>
                         <span className="text-gray-700">{note}</span>
@@ -2238,7 +2274,7 @@ export default function Portal() {
                 <div className="bg-gray-50 rounded-2xl p-4 sm:p-6">
                   <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4">Normas</h3>
                   <div className="space-y-2">
-                    {selectedProduct.rules.map((rule, index) => (
+                    {selectedProduct.rules.map((rule: string, index: number) => (
                       <div key={index} className="flex items-start gap-3">
                         <div className="w-2 h-2 bg-gray-500 rounded-full flex-shrink-0 mt-2"></div>
                         <span className="text-gray-700">{rule}</span>

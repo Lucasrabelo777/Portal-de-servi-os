@@ -65,9 +65,9 @@ const triggersData = [
 ]
 
 export default function BibliotecaGatilhos() {
-  const [copiedTrigger, setCopiedTrigger] = useState('')
+  const [copiedTrigger, setCopiedTrigger] = useState<string | number>('')
 
-  const copyTriggerLink = (link, triggerId) => {
+  const copyTriggerLink = (link: string, triggerId: number) => {
     navigator.clipboard.writeText(link)
     setCopiedTrigger(triggerId)
     setTimeout(() => setCopiedTrigger(''), 2000)
